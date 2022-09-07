@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Adoption Agency
+{% endblock %}
+
+{% block body %}
+
+<h1 class="text-secondary">Pets</h1>
+<div class="row">
+    {% for pet in pets %}
+    <div class="card col col-md-6 col-lg-4">
+        {% if pet.photo_url %}
+        <img src="{{pet.photo_url}}" alt="" class="card-img-top">
+        {% endif %}
+        <div class="card-body">
+            <p class="card-text">
+                {{pet.name}} is {{"Available!" if pet.available else "Unavailable"}}
+            </p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
