@@ -9,7 +9,7 @@ Adoption Agency
 <h1 class="text-secondary">Pets</h1>
 <div class="row">
     {% for pet in pets %}
-    <div class="card col col-md-6 col-lg-4">
+    <div class="card col-12 col-md-6 col-lg-4">
         {% if pet.photo_url %}
         <img src="{{pet.photo_url}}" alt="" class="card-img-top">
         {% endif %}
