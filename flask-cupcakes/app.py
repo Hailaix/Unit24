@@ -1,6 +1,6 @@
 """Flask app for Cupcakes"""
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from models import db, connect_db, Cupcake
 from flask_debugtoolbar import DebugToolbarExtension
 
@@ -12,6 +12,10 @@ app.config['SECRET_KEY'] = "secretcupcake"
 debug = DebugToolbarExtension(app)
 
 connect_db(app)
+
+@app.route("/")
+def index_page():
+    return render_template("index.html")
 
 # API routes ###################################################
 
@@ -34,8 +38,10 @@ def new_cupcake():
         flavor = request.json["flavor"],
         size = request.json["size"],
         rating = request.json["rating"],
-        image = request.json.get("image", None)
+        image = request.json["image"]
     )
+    if not new_cup.image:
+        new_cup.image = None
     db.session.add(new_cup)
     db.session.commit()
     response_json = jsonify(cupcake=new_cup.serialize())
