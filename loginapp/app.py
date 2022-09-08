@@ -29,9 +29,12 @@ def register_page():
         fname = form.first_name.data
         lname = form.last_name.data
         new_user = User.register(uname, pwd, email, fname, lname)
-        
         db.session.add(new_user)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except:
+            form.username.errors.append("Username or Email has already been registered")
+            return render_template("register_form.html", form=form)
 
         session["username"] = new_user.username
         

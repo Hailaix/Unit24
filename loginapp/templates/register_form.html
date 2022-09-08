@@ -17,7 +17,7 @@ Register
                 {{field(class_="form-control")}}
             </div>
             {% for error in field.errors %}
-            <span class="col text-warning">{{error}}</span>
+            <span class="col text-danger">{{error}}</span>
             {% endfor %}
         </div>
         {% else %}
