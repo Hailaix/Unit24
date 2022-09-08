@@ -27,14 +27,19 @@
     {% if user.feedback_list %}
     <div class="row">
         {% for feedback in user.feedback_list %}
-        <div class="card col-12 col-lg-6">
-            <div class="card-body">
-                <h5 class="card-title">{{feedback.title}}</h5>
-                <p class="card-text">{{feedback.content}}</p>
-                {% if session["username"] == user.username %}
-                <a href="#" class="card-link">Edit</a>
-                <a href="#" class="card-link">Delete</a>
-                {% endif %}
+        <div class="col col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{feedback.title}}</h5>
+                    <p class="card-text">{{feedback.content}}</p>
+                    {% if session["username"] == user.username %}
+                    <a href="/feedback/{{feedback.id}}/update" class="btn btn-link">Edit</a>
+                    <form action="/feedback/{{feedback.id}}/delete" method="post"
+                    class="form-inline">
+                    <button class="btn btn-link">Delete</button>
+                    </form>
+                    {% endif %}
+                </div>
             </div>
         </div>
         {% endfor %}
