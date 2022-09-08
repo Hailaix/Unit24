@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, session, flash
-from models import db, connect_db, User
+from models import db, connect_db, User, Feedback
 from flask_debugtoolbar import DebugToolbarExtension
-from forms import RegisterForm, LoginForm
+from forms import RegisterForm, LoginForm, FeedbackForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///loginapp'
@@ -63,6 +63,7 @@ def login_page():
 def logout():
     """removes the user from the session"""
     session.pop("username")
+    flash("logged out", "info")
     return redirect("/")
 
 @app.route("/secret")
@@ -76,8 +77,41 @@ def secret_route():
 @app.route("/users/<username>")
 def user_page(username):
     """profile page for the user"""
-    if "username" not in session or session["username"] != username:
-        flash("You must be logged in as the user to see their profile!", "warning")
+    if "username" not in session:
+        flash("You must be logged in to see profile pages!", "warning")
         return redirect("/")
     user = User.query.get_or_404(username)
     return render_template("profile.html", user=user)
+
+@app.route("/users/<username>/delete", methods=["POST"])
+def delete_user(username):
+    """delete logged in user"""
+    if "username" not in session or session["username"] != username:
+        flash(f"You must be logged in as {username} to delete {username}","danger")
+        return redirect(f"/users/{username}")
+    user = User.query.get_or_404(username)
+    
+    db.session.delete(user)
+    db.session.commit()
+    session.pop("username")
+
+    flash(f"{username} Deleted", "danger")
+    return redirect("/")
+
+@app.route("/users/<username>/feedback/add", methods=["GET", "POST"])
+def add_feeback(username):
+    """adds feedback as username"""
+    if "username" not in session or session["username"] != username:
+        flash(f"You must be logged in as {username} to give feedback as them","warning")
+        return redirect(f"/users/{username}")
+    form = FeedbackForm()
+    if form.validate_on_submit():
+        title = form.title.data
+        content = form.content.data
+        new_feedback = Feedback(title=title, content=content, username=username)
+
+        db.session.add(new_feedback)
+        db.session.commit()
+
+        return redirect(f"/users/{username}")
+    return render_template("feedback_form.html", form=form)

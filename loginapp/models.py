@@ -19,6 +19,8 @@ class User(db.Model):
     first_name = db.Column(db.String(30), nullable=False)
     last_name = db.Column(db.String(30), nullable=False)
 
+    feedback_list = db.relation('Feedback', backref="user")
+
     @classmethod
     def register(cls, uname, pwd, email, fname, lname):
         """return a new user (encrypted pwd)"""
@@ -43,3 +45,12 @@ class User(db.Model):
         if user and bcrypt.check_password_hash(user.password, pwd):
             return user
         return False
+
+class Feedback(db.Model):
+    """Some feedback"""
+    __tablename__ = "feedback"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    username = db.Column(db.String(20), db.ForeignKey('users.username', ondelete="CASCADE"))
