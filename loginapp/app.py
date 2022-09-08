@@ -35,7 +35,7 @@ def register_page():
 
         session["username"] = new_user.username
         
-        return redirect("/secret")
+        return redirect(f"/users/{new_user.username}")
 
     return render_template("register_form.html", form=form)
 
@@ -50,7 +50,7 @@ def login_page():
         user = User.authenticate(uname,pwd)
         if user:
             session["username"] = user.username
-            return redirect("/secret")
+            return redirect(f"/users/{user.username}")
         else:
             form.username.errors = ["Invalid username or password"]
 
@@ -69,3 +69,12 @@ def secret_route():
         flash("You must be logged in to view the secret page", "warning")
         return redirect("/")
     return render_template("secret.html")
+
+@app.route("/users/<username>")
+def user_page(username):
+    """profile page for the user"""
+    if "username" not in session or session["username"] != username:
+        flash("You must be logged in as the user to see their profile!", "warning")
+        return redirect("/")
+    user = User.query.get_or_404(username)
+    return render_template("profile.html", user=user)
