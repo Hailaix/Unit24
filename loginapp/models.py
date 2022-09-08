@@ -21,7 +21,7 @@ class User(db.Model):
 
     @classmethod
     def register(cls, uname, pwd, email, fname, lname):
-        """return a new user (encrypted pass)"""
+        """return a new user (encrypted pwd)"""
         hashpass = bcrypt.generate_password_hash(pwd)
         # Convert from bytestring to utf8 string
         utf8_pass = hashpass.decode("utf8")
